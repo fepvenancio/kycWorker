@@ -1,7 +1,9 @@
 import {
     Relation,
     Info,
-} from '../interfaces/index';
+    ProviderData,
+    Client,
+} from '../types/sharedTypes';
 import { Env } from '../types/sharedTypes';
 import { drizzle } from 'drizzle-orm/d1';
 import { eq } from 'drizzle-orm';
@@ -13,7 +15,6 @@ import {
     insertClientsSchema,
     insertMockKycSchema,
 } from '../db/index';
-import { ProviderData } from '../interfaces/database';
 
 export class Database {
     private db: any;
@@ -34,7 +35,7 @@ export class Database {
         return info;
     }
 
-    async getClientById(id: number): Promise<any> {
+    async getClientById(id: number): Promise<Client> {
         const result = await this.db.select().from(clients).where(eq(clients.id, id)).run();
         return result.results;
     }
@@ -49,7 +50,7 @@ export class Database {
         return 0; 
     }
 
-    async getClients(): Promise<any> {
+    async getClients(): Promise<Client[]> {
         const results = await this.db.select().from(clients).run();
         return results;
     }
@@ -70,7 +71,7 @@ export class Database {
         return results.results;
     }
 
-    async getSubmissionIdByAddressAndProvider(address: string, providerId: number): Promise<any> {
+    async getSubmissionIdByAddressAndProvider(address: string, providerId: number): Promise<string> {
         const results = await this.db.select().from(relations).where(eq(relations.provider_id, providerId), eq(relations.address, address.toLowerCase())).run();
         return results.results[0].submission_id;
     }

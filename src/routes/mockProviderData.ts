@@ -4,6 +4,8 @@ import { Env } from '../types/sharedTypes';
 import { zValidator } from '@hono/zod-validator';
 import { insertMockKycSchema } from '../db/index'
 import { getNumericCodeFromAlpha3 } from '../services/iso3166';
+import { authMiddleware } from '../middleware/authMiddleware';
+import { z } from 'zod';
 
 const mockProviderData = new Hono<{ Bindings: Env }>();
 
@@ -12,10 +14,22 @@ const providerDataSchema = insertMockKycSchema.omit({
     address: true
 });
 
-mockProviderData.post('/data/:address', zValidator("json", providerDataSchema), async (c) => {
+const params = z.object({
+    address: 
+        z.string().regex(new RegExp(/^0x[0-9A-Fa-f]{40}$/), 
+        { message: 'Address must be a valid Ethereum address' }
+    )
+});
+
+mockProviderData.post(
+    '/data/:address', 
+    zValidator('json', providerDataSchema), 
+    zValidator('param', params),
+    authMiddleware, 
+    async (c) => {
     try {
         // validate the data posted
-        const providerData = c.req.valid("json");
+        const providerData = c.req.valid('json');
 
         // after validate the data, insert it into the database
         const address = c.req.param('address').toLowerCase();
@@ -27,7 +41,7 @@ mockProviderData.post('/data/:address', zValidator("json", providerDataSchema), 
         );
         
         if (!info) {
-            return c.json({ success: false, error: "KYC data not inserted" })
+            return c.json({ success: false, error: 'KYC data not inserted' })
         }
 
         let client_id = await database.getClientIdByAddress(address);
@@ -39,7 +53,7 @@ mockProviderData.post('/data/:address', zValidator("json", providerDataSchema), 
         }
 
         if (!clientInfo) {
-            return c.json({ success: false, error: "Client data not inserted" })
+            return c.json({ success: false, error: 'Client data not inserted' })
         }
 
         const country = getNumericCodeFromAlpha3(providerData.country) as number;
@@ -62,7 +76,7 @@ mockProviderData.post('/data/:address', zValidator("json", providerDataSchema), 
 
         return c.json({ success: true, data: info });
     } catch (error) {
-        return c.json({ success: false, error: "Failed to insert KYC data" })
+        return c.json({ success: false, error: 'Failed to insert KYC data' })
     }
 });
 

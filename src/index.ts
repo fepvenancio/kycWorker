@@ -1,9 +1,8 @@
 import { Hono } from 'hono';
-import { Env } from './interfaces/env';
+import { Env } from './types/sharedTypes';
 import kycRouter from './routes/kyc';
 import userRouter from './routes/user';
 import mockProviderRouter from './routes/mockProviderData';
-import { authMiddleware } from './middleware/authMiddleware';
 import { cors } from 'hono/cors';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -22,9 +21,6 @@ app.use(cors({
 app.options('*', (c) => {
     return c.json({ success: true }, 204); 
 });
-
-// Apply auth middleware
-app.use('/*', authMiddleware);
 
 app.notFound((c) => c.json({ message: 'Route not Found', ok: false }, 404));
 
