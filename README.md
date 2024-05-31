@@ -15,7 +15,7 @@ Cloudflare account
 
 Clone the repository:
 ```bash
-$ git clone https://github.com/yourusername/kycworker.git
+$ git clone git@github.com:Solthodox/kyc-wonder-chainlink-block-magic.git
 ```
 Install the dependencies:
 ```bash
@@ -65,7 +65,7 @@ The server will start running at http://localhost:3000.
 
 You can now make API requests to the following endpoints:
 
-POST /mock-data/data/:address: Create mock KYC data for a given Ethereum address.
+#### POST /mock-data/data/:address: Create mock KYC data for a given Ethereum address.
 
 Example request:
 ```bash
@@ -93,28 +93,79 @@ x-api-key: <your_api_key>
   "monthly_Balance": 1
 }
 ```
-GET /user/:address: Get user information using the Ethereum address.
+returns:
+```json
+{
+  "success": true,
+  "data": {
+    "success": true,
+    "meta": {
+      "duration": 123
+    }
+  }
+}
+```
+
+#### GET /user/:address: Get user information using the Ethereum address.
 
 Example request:
 ```bash
 GET http://kycworker.kycwonder.workers.dev/user/0x94aBa23b9Bbfe7bb62A9eB8b1215D72b5f6F33a1
 x-api-key: <your_api_key>
 ```
-
-POST /user/add-address/:address/:newAddress: Add a new Ethereum address for a user.
+returns:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "address": "0x94aBa23b9Bbfe7bb62A9eB8b1215D72b5f6F33a1",
+      "provider_id": 1,
+      "client_id": 1,
+      "submissionId": "678ASF",
+      "yearOfBirth": 1983,
+      "countryCode": 620,
+      "isAdult": 1,
+      "creditScore": 0
+    }
+  ]
+}
+```
+#### POST /user/add-address/:address/:newAddress: Add a new Ethereum address for a user.
 
 Example request:
 ```bash
 POST https://kycworker.kycwonder.workers.dev/user/add-address/0x94aBa23b9Bbfe7bb62A9eB8b1215D72b5f6F33a1/0x429796dAc057E7C15724196367007F1e9Cff82F9
 x-api-key: <your_api_key>
 ```
-GET /kyc/:address/:providerId: Get KYC data for a user using the Ethereum address and provider ID.
+returns:
+```json
+{
+  "success": true,
+  "result": {
+    "success": true,
+    "meta": {
+      "duration": 123
+    }
+  }
+}
+```
+
+#### GET /kyc/:address/:providerId: Get KYC data for a user using the Ethereum address and provider ID.
 
 Example request:
 ```bash
 GET https://kycworker.kycwonder.workers.dev/kyc/0x94aBa23b9Bbfe7bb62A9eB8b1215D72b5f6F33a1/1
 x-api-key: <your_api_key>
 ```
+returns:
+```json
+{
+    "parsedData": "40638399"
+}
+```
+
 Include the x-api-key header in your requests with the appropriate API key (AUTH_API_KEY or FRONT_API_KEY).
 
 ## Deployment
