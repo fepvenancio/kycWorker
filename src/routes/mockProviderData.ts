@@ -1,11 +1,12 @@
 import { Hono } from 'hono';
 import { Database } from '../services/database';
-import { Env } from '../types/sharedTypes';
+import { CreditScore, Env } from '../types/sharedTypes';
 import { zValidator } from '@hono/zod-validator';
 import { insertMockKycSchema } from '../db/index'
 import { getNumericCodeFromAlpha3 } from '../services/iso3166';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { z } from 'zod';
+import { getCreditScore } from '../services/mockCreditScore';
 
 const mockProviderData = new Hono<{ Bindings: Env }>();
 
@@ -58,7 +59,10 @@ mockProviderData.post(
 
         const country = getNumericCodeFromAlpha3(providerData.country) as number;
         const adult = providerData.yearOfBirth <= new Date().getFullYear() - 18 ? 1 : 0;
+        const userCreditScoreData:CreditScore = providerData;
 
+        const cScore = await getCreditScore(userCreditScoreData);
+        console.log(cScore);
         const relationInfo = await database.createRelation({
             address: address,
             provider_id: providerData.provider_id,
@@ -66,7 +70,7 @@ mockProviderData.post(
             submissionId: providerData.submission_id,
             isAdult: adult,
             countryCode: country,
-            creditScore: 0,
+            creditScore: cScore,
             yearOfBirth: providerData.yearOfBirth
         });
 

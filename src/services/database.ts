@@ -42,9 +42,7 @@ export class Database {
 
     async getClientIdByAddress(address: string): Promise<number> {
         const result = await this.db.select().from(clients).where(eq(clients.creator, address.toLowerCase())).run();
-        console.log(result);
         if (result.results && result.results.length > 0) {
-            console.log(result.results[0].id);
             return result.results[0].id;
         }
         return 0; 
@@ -119,9 +117,9 @@ export class Database {
     }
 
     //--- Wallets ---//
-    async getClientByAddress(address: string): Promise<number> {
-        const result = await this.db.select().from(clients).where(eq(clients.creator, address.toLowerCase())).run();
-        return result.results[0].id;
+    async getClientIdByRelationsAddress(address: string): Promise<number> {
+        const result = await this.db.select().from(relations).where(eq(relations.address, address.toLowerCase())).run();
+        return result.results[0].client_id;
     }
 
     async getWallets(clientId: number): Promise<Relation[]> {

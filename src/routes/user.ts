@@ -32,7 +32,7 @@ user.get('/:address',
     const address = c.req.param('address').toLowerCase();
     const envr: Env = c.env;
     const database = new Database(envr);
-    const clientId = await database.getClientByAddress(address);
+    const clientId = await database.getClientIdByRelationsAddress(address);
     const addresses = await database.getWallets(clientId);
     
     return c.json({ success: true, data: addresses });

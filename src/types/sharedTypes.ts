@@ -59,6 +59,24 @@ export type ProviderData = {
     monthly_Balance: number
 }
 
+export type CreditScore = Omit<ProviderData, 
+'name' | 'yearOfBirth' | 'country' | 'provider_id' | 'submission_id'>
+
+export type FormCSData = {
+  Monthly_Inhand_Salary: number;
+  Annual_Income: number;
+  Monthly_Balance: number;
+  Credit_History_Year: number;
+  Num_Bank_Accounts: number;
+  Delay_from_due_date: number;
+  Interest_Rate: number;
+  Credit_Mix: number;
+  Outstanding_Debt: number;
+  Num_of_Delayed_Payment: number;
+  Num_Credit_Card: number;
+  Num_of_Loan: number;
+}
+
 export type KycData = {
     name: string;
     yearOfBirth: number;
