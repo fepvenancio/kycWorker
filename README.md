@@ -46,6 +46,15 @@ database_id = "your_database_id"
 ```
 Replace your_database_id with your actual D1 database ID.
 
+I recommend using Wrangler D1Database mockschema.sql file to create the mockDatabase
+
+for local use --local for remote use --remote
+```bash
+npx wrangler d1 execute worker-db --local --file=./src/db/schemas/mockschema.sql
+```
+
+In case you want to properly set up the database, you can use the following commands:
+
 Generate the database schema:
 ```bash
 bun run db:generate
