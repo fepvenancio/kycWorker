@@ -11,7 +11,7 @@ export class Web3 {
     }
 
     async getContract(): Promise<ethers.Contract> {
-        const address = '0xe7e1142e3173737cA2E39999df97CbaE6DcAC54c';
+        const address = '0xdBbe87d0097F2B2381d67817EDA8f4E8bd2CCd46';
         return new ethers.Contract(address, KycAggregatorABI, this.provider);
     }
 
